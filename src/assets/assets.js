@@ -234,7 +234,7 @@ export const dummyMyBookingsData = [
 export const dummyDashboardData = {
   totalCars: 4,
   totalBookings: 2,
-  pendingBookings: 0,
+  pendingBookings: 1,
   completedBookings: 2,
   recentBookings: [dummyMyBookingsData[0], dummyMyBookingsData[1]],
   monthlyRevenue: 840,
