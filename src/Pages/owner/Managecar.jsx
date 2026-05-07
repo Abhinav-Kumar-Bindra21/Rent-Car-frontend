@@ -16,7 +16,7 @@ const Managecar = () => {
   return (
     <div className="px-10 pt-10 md:px-10 w-full">
       <Title
-        title="MAnage Cars"
+        title="Manage Cars"
         subTitle="View all listed cars, update thier details, or remove them from the booking platform"
       />
 
