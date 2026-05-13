@@ -30,7 +30,7 @@ const FeaturedSection = () => {
         }}
         className="flex items-center justify-center gap-2 px-6 py-2 border border-borderColor hover: bg-gary-50 rounded-md mt-18 cursor-pointer"
       >
-        Explore all cars <img src={assets.arrow_icon} alt="arroe" />
+        Explore all cars <img src={assets.arrow_icon} alt="arrow" />
       </button>
     </div>
   );
