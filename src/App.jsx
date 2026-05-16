@@ -12,12 +12,14 @@ import AddCar from "./Pages/owner/AddCar";
 import Managecar from "./Pages/owner/Managecar";
 import ManageBooking from "./Pages/owner/ManageBooking";
 import Login from "./Components/Login";
+import {Toaster} from "react-hot-toast"
 
 const App = () => {
   const [showLogin, setShowLogin] = useState(false);
   const isOwnerPath = useLocation().pathname.startsWith("/owner");
   return (
     <>
+    <Toaster/>
       {showLogin && <Login setShowLogin={setShowLogin} />}
 
       {!isOwnerPath && <Navbar setShowLogin={setShowLogin} />}
