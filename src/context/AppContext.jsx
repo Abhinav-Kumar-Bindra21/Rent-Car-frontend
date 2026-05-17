@@ -24,7 +24,12 @@ export const AppProvider = ({ children }) => {
   //Function to check if user is logged in
   const fetchUser = async () => {
     try {
+      // console.log("TOKEN:", token);
+
       const { data } = await axios.get("/api/user/data");
+
+      // console.log("USER DATA:", data);
+
       if (data.success) {
         setUser(data.user);
         setIsOwner(data.user.role === "owner");
@@ -32,7 +37,8 @@ export const AppProvider = ({ children }) => {
         navigate("/");
       }
     } catch (error) {
-      toast.error(error.message);
+      // console.log("ERROR:", error.response?.data || error);
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 
@@ -40,7 +46,7 @@ export const AppProvider = ({ children }) => {
 
   const fetchCars = async () => {
     try {
-      const { data } = await axios.get("/api/owner/cars");
+      const { data } = await axios.get("/api/user/cars");
       data.success ? setCars(data.cars) : toast.error(data.message);
     } catch (error) {
       toast.error(error.message);
@@ -68,8 +74,11 @@ export const AppProvider = ({ children }) => {
 
   //useEffect to fetch user data when token is Available
   useEffect(() => {
+    // console.log("TOKEN EFFECT:", token);
+
     if (token) {
-      axios.defaults.headers.common["Authorization"] = `${token}`;
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
       fetchUser();
     }
   }, [token]);

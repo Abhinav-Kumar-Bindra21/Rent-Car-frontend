@@ -1,4 +1,6 @@
 import React from "react";
+import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
 
 const Login = ({ setShowLogin }) => {
   const [state, setState] = React.useState("login");
@@ -6,18 +8,52 @@ const Login = ({ setShowLogin }) => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
 
+  const { axios, setToken } = useAppContext();
+
   const onSubmitHandler = async (e) => {
     e.preventDefault();
+
+    // console.log("FORM SUBMITTED");
+
+    try {
+      const endpoint = state === "login" ? "/api/user/login" : "/api/user/register";
+
+      const payload = state === "login" ? { email, password } : { username: name, email, password };
+
+      const { data } = await axios.post(endpoint, payload);
+
+      // console.log("LOGIN RESPONSE:", data);
+
+      if (data.success) {
+        localStorage.setItem("token", data.token);
+
+        setToken(data.token);
+
+        // console.log("TOKEN SAVED");
+
+        setShowLogin(false);
+
+        toast.success(data.message);
+      } else {
+        // console.log("FAILED");
+
+        toast.error(data.message);
+      }
+    } catch (error) {
+      // console.log("LOGIN ERROR:", error.response?.data || error);
+      toast.error(error.response?.data?.message || error.message);
+    }
   };
+
   return (
     <div
       onClick={() => setShowLogin(false)}
-      className="fixed top-0 bottom-0 left-0 right-0 z-100 flex items-center text-sm text-gray-600 bg-black/50"
+      className="fixed top-0 bottom-0 left-0 right-0 z-[100] flex items-center text-sm text-gray-600 bg-black/50"
     >
       <form
         onSubmit={onSubmitHandler}
         onClick={(e) => e.stopPropagation()}
-        className="flex flex-col gap-4 m-auto items-start p-8 py-12 w-80 `sm:w-[352px]` text-black rounded-lg shadow-xl border border-gray-200 bg-white"
+        className="flex flex-col gap-4 m-auto items-start p-8 py-12 w-80 sm:w-[352px] text-black rounded-lg shadow-xl border border-gray-200 bg-white"
       >
         <p className="text-2xl font-medium m-auto">
           <span className="text-(--primary-color)">User</span> {state === "login" ? "Login" : "Sign Up"}
@@ -72,7 +108,10 @@ const Login = ({ setShowLogin }) => {
             </span>
           </p>
         )}
-        <button className="bg-(--primary-color) hover:bg-blue-800 transition-all text-white w-full py-2 rounded-md cursor-pointer">
+        <button
+          type="submit"
+          className="bg-(--primary-color) hover:bg-blue-800 transition-all text-white w-full py-2 rounded-md cursor-pointer"
+        >
           {state === "register" ? "Create Account" : "Login"}
         </button>
       </form>
