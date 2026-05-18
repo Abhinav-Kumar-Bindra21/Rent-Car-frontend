@@ -75,9 +75,6 @@ const Navbar = () => {
 
           <button
             onClick={() => {
-              console.log("clicked");
-              console.log(user);
-              console.log(isOwner);
               user ? logout() : setShowLogin(true);
             }}
             className="cursor-pointer px-8 py-2 bg-(--primary-color) hover:bg-primary-dull transition-all text-white rounded-lg"
