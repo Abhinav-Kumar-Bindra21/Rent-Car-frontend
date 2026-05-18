@@ -57,10 +57,15 @@ export const AppProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem("token");
+
     setToken(null);
     setUser(null);
     setIsOwner(false);
+
     axios.defaults.headers.common["Authorization"] = "";
+
+    navigate("/");
+
     toast.success("You have been logged out");
   };
 

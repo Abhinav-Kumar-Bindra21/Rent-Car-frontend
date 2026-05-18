@@ -14,6 +14,7 @@ import ManageBooking from "./Pages/owner/ManageBooking";
 import Login from "./Components/Login";
 import { Toaster } from "react-hot-toast";
 import { useAppContext } from "./context/AppContext";
+import ProtectedRoute from "./Components/ProtectedRoutes.jsx";
 
 const App = () => {
   const { showLogin, setShowLogin } = useAppContext();
@@ -31,7 +32,14 @@ const App = () => {
         <Route path="/cars" element={<Cars />} />
         <Route path="/my-bookings" element={<MyBooking />} />
 
-        <Route path="/owner" element={<Layout />}>
+        <Route
+          path="/owner"
+          element={
+            <ProtectedRoute>
+              <Layout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<Dashboard />} />
           <Route path="add-car" element={<AddCar />} />
           <Route path="manage-cars" element={<Managecar />} />
