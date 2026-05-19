@@ -1,13 +1,36 @@
 import React, { useEffect, useState } from "react";
-import { dummyMyBookingsData } from "../../assets/assets";
+
 import Title from "../../Components/ownerComponents/Title";
+import { useAppContext } from "../../context/AppContext";
+import toast from "react-hot-toast";
 
 const ManageBooking = () => {
-  const currency = import.meta.env.VITE_CURRENCY;
+  const { axios, currency } = useAppContext();
+
   const [bookings, setBookings] = useState([]);
 
   const fetchOwnerBooking = async () => {
-    setBookings(dummyMyBookingsData);
+    try {
+      const { data } = axios.get("/api/bookings/owner");
+      data.success ? setBookings(data.bookings) : toast.error(data.message);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  const changeBookingStatus = async (bookingId, status) => {
+    try {
+      const { data } = axios.post("/api/bookings/change-status", { bookingId, status });
+
+      if (data.success) {
+        toast.success(data.message);
+        fetchOwnerBooking();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
 
   useEffect(() => {
@@ -57,6 +80,7 @@ const ManageBooking = () => {
                 <td className="p-3">
                   {booking.status === "pending" ? (
                     <select
+                      onChange={(e) => changeBookingStatus(booking._id, e.target.value)}
                       defaultValue={booking.status}
                       className="px-2 py-1.5 mt-1 text-gray-500 border border-borderColor rounded-md outline-none"
                     >

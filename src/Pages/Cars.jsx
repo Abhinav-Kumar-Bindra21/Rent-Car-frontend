@@ -18,7 +18,7 @@ const Cars = () => {
 
           <input
             onClick={(e) => setInput(e.target.value)}
-            value={input}
+            defaultValue={input}
             type="text"
             placeholder="Search by make model, or features"
             className="w-full h-full outline-none text-gray-500"
