@@ -1,16 +1,33 @@
 import React from "react";
-import { assets, dummyUserData, ownerMenuLinks } from "../../assets/assets";
+import { assets, ownerMenuLinks } from "../../assets/assets";
 import { NavLink, useLocation } from "react-router";
 import { useState } from "react";
+import { useAppContext } from "../../context/AppContext";
+import toast from "react-hot-toast";
 
 const Sidebar = () => {
-  const user = dummyUserData;
+  const { user, axios, fetchUser } = useAppContext();
+
   const location = useLocation();
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(null);
 
   const updateImage = async () => {
-    user.image = URL.createObjectURL(image);
-    setImage("");
+    try {
+      const formData = new FormData();
+      formData.append("image", image);
+
+      const { data } = await axios.post("/api/owner/update-image", formData);
+
+      if (data.success) {
+        await fetchUser();
+        setImage(null);
+        toast.success(data.message);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+    }
   };
   return (
     <div className="relative min-h-screen md:flex flex-col items-center pt-8 max-w-13 md:max-w-60 w-full border-r border-borderColor text-sm">
@@ -20,9 +37,7 @@ const Sidebar = () => {
             src={
               image
                 ? URL.createObjectURL(image)
-                : user?.image
-                  ? user.image
-                  : "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=300"
+                : user?.image || "https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=300"
             }
             alt=""
             className="h-9 md:h-14 w-9 md:w-14 rounded-full mx-auto"
@@ -37,12 +52,15 @@ const Sidebar = () => {
       </div>
 
       {image && (
-        <button className="absolute top-0 right-0 flex p-2 gap-1  bg-(--primary-color)/10 text-[var(--color-light)] cursor-pointer">
-          Save <img src={assets.check_icon} alt="" width={13} onClick={updateImage} />
+        <button
+          onClick={updateImage}
+          className="absolute top-0 right-0 flex p-2 gap-1  bg-(--primary-color)/10 'text-[var(--color-light)]' cursor-pointer"
+        >
+          Save <img src={assets.check_icon} alt="" width={13} />
         </button>
       )}
 
-      <p className="mt-2 text-base max-md:hidden">{user?.name}</p>
+      <p className="mt-2  max-md:hidden text-xl">{user?.username}</p>
 
       <div className="w-full">
         {ownerMenuLinks.map((link, index) => (
