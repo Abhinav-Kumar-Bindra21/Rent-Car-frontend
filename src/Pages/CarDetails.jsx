@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router";
 import { assets, dummyCarData } from "../assets/assets";
 import Loader from "../Components/Loader";
 import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
 
 const CarDetails = () => {
   const { id } = useParams();
@@ -12,6 +13,22 @@ const CarDetails = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      const { data } = await axios.post("/api/bookings/create", {
+        car: id,
+        pickupDate,
+        returnDate,
+      });
+
+      if (data.success) {
+        toast.success(data.message);
+        navigate("/my-bookings");
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
   };
 
   useEffect(() => {
@@ -101,6 +118,8 @@ const CarDetails = () => {
           <div className="flex flex-col gap-2">
             <label htmlFor="pickup-date">Pickup Date</label>
             <input
+              value={pickupDate}
+              onChange={(e) => setPickupDate(e.target.value)}
               type="date"
               className="border border-borderColor px-3 py-2 rounded-lg"
               required
@@ -111,7 +130,14 @@ const CarDetails = () => {
 
           <div className="flex flex-col gap-2">
             <label htmlFor="return-dare">Return Date</label>
-            <input type="date" className="border border-borderColor px-3 py-2 rounded-lg" required id="return-date" />
+            <input
+              value={returnDate}
+              onChange={(e) => setReturnDate(e.target.value)}
+              type="date"
+              className="border border-borderColor px-3 py-2 rounded-lg"
+              required
+              id="return-date"
+            />
           </div>
 
           <button className="w-full bg-(--primary-color) hover:bg-primary-dull transition-all py-3 font-medium text-white rounded-xl cursor-pointer">
