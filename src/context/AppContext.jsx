@@ -23,6 +23,9 @@ export const AppProvider = ({ children }) => {
 
   //Function to check if user is logged in
   const fetchUser = async () => {
+    const token = localStorage.getItem("token");
+
+    if (!token) return;
     try {
       // console.log("TOKEN:", token);
 
@@ -38,6 +41,11 @@ export const AppProvider = ({ children }) => {
       }
     } catch (error) {
       // console.log("ERROR:", error.response?.data || error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem("token");
+        return;
+      }
+
       toast.error(error.response?.data?.message || error.message);
     }
   };
