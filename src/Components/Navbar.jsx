@@ -12,20 +12,11 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const changeRole = async () => {
-    try {
-      const { data } = await axios.post("/api/owner/change-role");
-
-      if (data.success) {
-        setIsOwner(true);
-        toast.success(data.message);
-
-        navigate("/owner");
-      } else {
-        toast.error(data.message);
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.message || error.message);
+    if (!user || user.role !== "owner") {
+      return toast.error("Only owners have access");
     }
+
+    navigate("/owner");
   };
 
   return (

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { assets, dummyDashboardData } from "../../assets/assets";
+import { assets } from "../../assets/assets";
 import Title from "../../Components/ownerComponents/Title";
 import { useAppContext } from "../../context/AppContext";
 import toast from "react-hot-toast";
@@ -43,13 +43,14 @@ const Dashboard = () => {
   const fetchDasshboardData = async () => {
     try {
       const { data } = await axios.get("/api/owner/dashboard");
+
       if (data.success) {
         setData(data.dashboardData);
       } else {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || error.message);
     }
   };
 
@@ -82,39 +83,47 @@ const Dashboard = () => {
       </div>
 
       <div className="flex flex-wrap items-start gap-6 mb-8 w-full">
-        {/* recent booking*/}
+        {/* recent booking */}
         <div className="p-4 md:p-6 border border-borderColor rounded-md max-w-lg w-full">
           <h1 className="text-lg font-medium">Recent Bookings</h1>
           <p className="text-gray-500">Latest customer bookings</p>
-          {data.recentBookings.map((booking, index) => (
-            <div key={index} className="mt-4 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="hidden md:flex items-center justify-center w-12 h-12 rounded-full  ">
-                  <img src={assets.listIconColored} alt="" className="h-5 w-5" />
+
+          {data?.recentBookings
+            ?.filter((booking) => booking?.car)
+            .map((booking, index) => (
+              <div key={index} className="mt-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="hidden md:flex items-center justify-center w-12 h-12 rounded-full">
+                    <img src={assets.listIconColored} alt="" className="h-5 w-5" />
+                  </div>
+
+                  <div>
+                    <p>
+                      {booking.car?.brand} {booking.car?.model}
+                    </p>
+
+                    <p className="text-sm text-gray-500">{booking.createdAt?.split("T")[0]}</p>
+                  </div>
                 </div>
 
-                <div>
-                  <p>
-                    {booking.car.brand} {booking.car.model}
+                <div className="flex items-center gap-2 font-medium">
+                  <p className="text-sm text-gray-500">
+                    {currency}
+                    {booking.price}
                   </p>
-                  <p className="text-sm text-gray-500">{booking.createdAt.split("T")[0]}</p>
+
+                  <p className="px-3 py-0.5 border border-borderColor rounded-full text-sm">{booking.status}</p>
                 </div>
               </div>
-
-              <div className="flex items-center gap-2 font-medium">
-                <p className="text-sm text-gray-500">
-                  {currency}
-                  {booking.price}
-                </p>
-                <p className="px-3 py-0.5 border border-borderColor rounded-full text-sm">{booking.status}</p>
-              </div>
-            </div>
-          ))}
+            ))}
         </div>
-        {/* montly booking */}
+
+        {/* monthly booking */}
         <div className="p-4 md:p-6 mb-6 border border-borderColor rounded-md w-full md:max-w-xs">
           <h1 className="text-lg font-medium">Monthly Revenue</h1>
+
           <p className="text-gray-500">Revenue for current month</p>
+
           <p className="text-3xl mt-6 font-semibold text-(--primary-color)">
             {currency}
             {data.monthlyRevenue}
